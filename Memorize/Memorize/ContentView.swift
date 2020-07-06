@@ -8,38 +8,59 @@
 import SwiftUI
 
 struct ContentView: View {
-	@State private var faceUp = false
 
+	private var adaptiveGrid = [GridItem(.adaptive(minimum: 100))]
+
+	@State private var viewModel = EmojiMemoryGame()
+	
 	var body: some View {
-		HStack {
-			ForEach(0..<4) { item in
-				CardView(isFaceUp: $faceUp)
+		NavigationView {
+			ScrollView {
+				LazyVGrid(columns: adaptiveGrid, spacing: 20) {
+					ForEach(viewModel.cards.shuffled()) { card in
+						CardView(card: card)
+					}
+				}
 			}
-			.padding()
 			.foregroundColor(Color.orange)
-			.font(.largeTitle)
+			.font(viewModel.cards.count < 5 ? Font.system(size: 60) : .title)
+			// MARK: - Вынести ToolbarItem в extension
+			.toolbar {
+				ToolbarItem(placement: .bottomBar) {
+					HStack(spacing: 20) {
+						Image(systemName: "square.grid.3x3.fill")
+						Image(systemName: "repeat")
+						Text("Memorize")
+					}
+				}
+			}
 		}
+
+		.padding()
 	}
 }
 
 
 
 struct CardView: View {
-	@Binding var isFaceUp: Bool
-
+	var card: MemoryGame<String>.Card
+	
 	var body: some View {
 		ZStack {
-			switch isFaceUp {
+			switch card.isFaceUp {
 				case true:
 					RoundedRectangle(cornerRadius: 10).fill(Color.white)
 					RoundedRectangle(cornerRadius: 10).strokeBorder(lineWidth: 3)
-					Text("🦄")
+					Text(card.content)
 				case false:
 					RoundedRectangle(cornerRadius: 10).fill()
 			}
 		}
 	}
 }
+
+
+
 
 
 
