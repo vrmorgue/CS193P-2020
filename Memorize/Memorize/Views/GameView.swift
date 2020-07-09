@@ -10,25 +10,35 @@ import SwiftUI
 
 struct GameView: View {
 
-	private let adaptive = [GridItem(.adaptive(minimum: 100))]
+	// MARK: - Some constans's
+	private let columns = [
+		GridItem(.adaptive(minimum: 150))
+	]
 
+	// TODO: - Create font extension
+	let geometryFont: (GeometryProxy) -> CGFloat = { geo in
+		max(geo.size.width, geo.size.height) * 0.15
+	}
+
+	// MARK: - Reactive model
 	@ObservedObject private var viewModel = EmojiMemoryGame()
 	
 	var body: some View {
-		NavigationView {
-			ScrollView {
-				LazyVGrid(columns: adaptive, spacing: 20) {
-					ForEach(viewModel.cards.shuffled()) { card in
-						CardView(card: card).onTapGesture {
-							viewModel.choose(card: card)
-						}
+		ScrollView {
+			GeometryReader { geo in
+				LazyVGrid(columns: columns, spacing: 10) {
+					ForEach(viewModel.cards) { card in
+						CardView(card: card)
+							.font(.system(size: geometryFont(geo)))
+							.foregroundColor(.purple)
+							.onTapGesture {
+								viewModel.choose(card: card)
+							}
 					}
 				}
+				.padding()
 			}
-			.foregroundColor(Color.orange)
-			.font(viewModel.cards.count < 5 ? .system(size: 60) : .title)
 		}
-		.padding()
 	}
 }
 

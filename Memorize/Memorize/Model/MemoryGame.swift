@@ -10,19 +10,7 @@ import Foundation
 
 // MARK: - Model
 struct MemoryGame<CardContent> {
-
 	var cards: [Card]
-
-
-	init(numbersOfPairsOfCard: Int, cardContentFactory: (Int) -> CardContent) {
-		cards = []
-
-		for pairIndex in 0..<numbersOfPairsOfCard {
-			let content = cardContentFactory(pairIndex)
-			cards.append(Card(content: content))
-			cards.append(Card(content: content))
-		}
-	}
 
 
 	func index(of card: Card) -> Int {
@@ -36,14 +24,23 @@ struct MemoryGame<CardContent> {
 
 	mutating func choose(card: Card) {
 		#if DEBUG
-			print("Card chosen: \(card)")
+		print("Card chosen: \(card)")
 		#endif
 
 		let index = self.index(of: card)
 		cards[index].isFaceUp = !cards[index].isFaceUp
 	}
-}
 
+	init(numbersOfPairsOfCard: Int, cardContentFactory: (Int) -> CardContent) {
+		cards = []
+
+		for pairIndex in 0..<numbersOfPairsOfCard {
+			let content = cardContentFactory(pairIndex)
+			cards.append(Card(content: content))
+			cards.append(Card(content: content))
+		}
+	}
+}
 
 
 extension MemoryGame {
